@@ -1,0 +1,156 @@
+<?php
+// Include database connection
+include('dbconnect.php');
+
+// Validate search parameters
+if (isset($_GET['from'], $_GET['to'], $_GET['date'])) {
+    $from = htmlspecialchars($_GET['from']);
+    $to = htmlspecialchars($_GET['to']);
+    $date = htmlspecialchars($_GET['date']);
+
+    // Query to fetch bus details
+    $query = "SELECT * FROM bus WHERE departure_city = ? AND arrival_city = ? AND travel_date = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sss", $from, $to, $date);
+    $stmt->execute();
+    $result = $stmt->get_result();
+} else {
+    die("<h2 class='text-center text-danger'>Invalid search parameters provided.</h2>");
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results | SmartBus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+        }
+        .bus-card {
+            border: none;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .bus-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .bus-card img {
+            width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .bus-details {
+            padding: 15px 0;
+        }
+        .bus-card h4 {
+            color: #007bff;
+            font-weight: 600;
+            text-align: center;
+        }
+        .bus-card p {
+            color: #6c757d;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .info-item {
+            flex: 1;
+            padding: 5px;
+            text-align: center;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+        }
+        .btn-success {
+            background: #28a745;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+        .no-results {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #888;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+    <h1 class="text-center">Search Results</h1>
+    <p class="lead text-center">Find your perfect bus ride from <strong><?php echo $from; ?></strong> to <strong><?php echo $to; ?></strong> on <strong><?php echo $date; ?></strong>.</p>
+
+    <div class="row">
+        <?php if ($result->num_rows > 0): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <div class="col-md-4">
+                    <div class="bus-card">
+                        <?php
+                        // Check if bus image is NULL, use a default image
+                        $bus_image = !empty($row['bus_image']) ? $row['bus_image'] : 'images/default_bus.jpg';
+                        ?>
+                        <img src="<?php echo htmlspecialchars($bus_image); ?>" alt="Bus Image">
+                        <div class="bus-details">
+                            <h4><?php echo htmlspecialchars($row['bus_name']); ?></h4>
+                            <div class="info-row">
+                                <div class="info-item"><i class="fas fa-clock"></i> Departure: <?php echo htmlspecialchars($row['departure_time']); ?></div>
+                                <div class="info-item"><i class="fas fa-clock"></i> Arrival: <?php echo htmlspecialchars($row['arrival_time']); ?></div>
+                                <div class="info-item"><i class="fas fa-map-marker-alt"></i> From: <?php echo htmlspecialchars($row['departure_city']); ?></div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-item"><i class="fas fa-map-marker-alt"></i> To: <?php echo htmlspecialchars($row['arrival_city']); ?></div>
+                                <div class="info-item"><i class="fas fa-calendar-alt"></i> Date: <?php echo htmlspecialchars($row['travel_date']); ?></div>
+                                <div class="info-item"><i class="fas fa-money-bill-wave"></i> Price: ₹<?php echo htmlspecialchars($row['price']); ?></div>
+                            </div>
+                            <div class="btn-container mt-3">
+                                <a href="seat_selection.php?bus_id=<?php echo $row['id']; ?>&date=<?php echo $date; ?>" class="btn btn-success"><i class="fas fa-check"></i> Select Seats</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <div class="no-results">
+                <p>No buses found for your search criteria.</p>
+                <a href="home.php">Go Back</a>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<footer class="text-center mt-4">
+    <p>&copy; 2025 SmartBus. All rights reserved. | <a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms of Service</a></p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
