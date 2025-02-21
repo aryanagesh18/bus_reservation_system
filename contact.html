@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SmartBus - Contact us for inquiries, feedback, and support.">
+    <meta name="keywords" content="SmartBus contact, bus travel support, customer service">
+    <title>Contact Us - SmartBus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Styles */
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid white;
+            margin-right: 20px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+        }
+
+        nav a:hover {
+            background-color: #0197F6;
+            transform: skewX(-10deg);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: url('images/contact.jpg') no-repeat center center;
+            background-size: cover;
+            height: 400px;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .hero h1, .hero p {
+            position: relative;
+            z-index: 2;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section Titles */
+        h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0197F6;
+            margin-bottom: 30px;
+            position: relative;
+            text-align: center;
+        }
+
+        h2::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background: #0197F6;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -10px;
+        }
+
+        /* Contact Form */
+        .form-control:focus {
+            box-shadow: 0px 0px 5px rgba(1, 151, 246, 0.5);
+            border-color: #0197F6;
+        }
+
+        .btn-primary {
+            background-color: #0197F6;
+            border: none;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0175b6;
+        }
+
+        /* Footer */
+        footer {
+            background: #222;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        footer a {
+            color: #0197F6;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/logo.jpeg" alt="SmartBus Logo">
+        </div>
+        <nav>
+            <a href="home.php">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html">Services</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>Contact Us</h1>
+        <p>We'd love to hear from you. Reach out to us anytime.</p>
+    </div>
+
+    <div class="container py-5">
+        <h2>Get in Touch</h2>
+        <p class="text-center lead mb-5">
+            Whether you have a question, feedback, or need assistance, our team is here to help.
+        </p>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Contact Details</h4>
+                <ul class="list-unstyled">
+                    <li><strong>Phone:</strong>+91 8310363989</li>
+                    <li><strong>Email:</strong> smartbus@gmail.com</li>
+                    <li><strong>Address:</strong> SmartBus Avenue, Mysuru, India</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h4>Send Us a Message</h4>
+                <form action="send_message.php" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SmartBus. All rights reserved. | <a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms of Service</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
