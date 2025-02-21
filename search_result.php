@@ -2,7 +2,7 @@
 // Include database connection
 include('dbconnect.php');
 
-// Check if search parameters are provided
+// ... (search parameters and query - no changes needed) ...
 if (isset($_GET['from'], $_GET['to'], $_GET['date'])) {
     $from = htmlspecialchars($_GET['from']);
     $to = htmlspecialchars($_GET['to']);
@@ -24,10 +24,10 @@ if (isset($_GET['from'], $_GET['to'], $_GET['date'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SmartBus - Search Results">
-    <meta name="keywords" content="bus search, bus tickets, SmartBus">
     <title>Search Results | SmartBus</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -36,83 +36,89 @@ if (isset($_GET['from'], $_GET['to'], $_GET['date'])) {
             color: #333;
             background: #f5f7fa;
         }
-        .header {
-            background: linear-gradient(45deg, #0197F6, #01C1F6);
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 3rem;
-            font-weight: bold;
-        }
-        .header p {
-            margin-top: 10px;
-            font-size: 1.25rem;
-        }
-        .results-container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 30px;
-            background: white;
+        /* ... (other styles) ... */
+
+        .bus-card {
+            border: none;
             border-radius: 15px;
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            overflow: hidden;
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack elements vertically */
+            height: 100%; /* Make cards equal height */
         }
-        .table th {
-            background: #0197F6;
-            color: white;
-            text-align: center;
+
+        .bus-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
-        .table tbody tr:hover {
-            background: #f1f8ff;
-            transition: background 0.3s ease;
+
+        .bus-card img {
+            max-width: 150px;
+            height: auto;
+            margin-right: 20px;
+            border-radius: 10px;
+            object-fit: cover;
+            transition: transform 0.3s;
         }
-        .btn-success {
+
+        .bus-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .bus-details {
+            flex-grow: 1; /* Allow details to take up remaining space */
+        }
+
+        .bus-card h4 {
+            color: #007bff;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .bus-card p {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .bus-card .btn-success {
+            margin-top: auto; /* Push button to the bottom */
+            margin-left: auto;
             background: #28a745;
             border: none;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .btn-success:hover {
-            background: #218838;
-            color: white;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+        .bus-card .btn-success:hover {
+            background-color: #218838;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
         }
+
         .no-results {
             text-align: center;
             font-size: 1.5rem;
             color: #888;
+            margin-top: 30px;
         }
-        .no-results a {
-            margin-top: 10px;
-            display: inline-block;
-            padding: 10px 20px;
-            background: #0197F6;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s ease;
+        .bus-card-container {
+            perspective: 1000px;
         }
-        .no-results a:hover {
-            background: #017bb5;
+
+        .bus-card {
+            transition: transform 0.5s ease;
+            transform-style: preserve-3d;
         }
-        footer {
-            background: #0197F6;
-            color: white;
-            padding: 20px 0;
-        }
-        footer p {
-            margin: 0;
-            font-size: 0.9rem;
-        }
-        footer a {
-            color: white;
-            text-decoration: underline;
-        }
-        footer a:hover {
-            text-decoration: none;
+
+        .bus-card:hover {
+            transform: rotateY(5deg);
         }
     </style>
 </head>
@@ -125,34 +131,27 @@ if (isset($_GET['from'], $_GET['to'], $_GET['date'])) {
 
 <div class="results-container">
     <?php if ($result->num_rows > 0): ?>
-        <table class="table table-bordered table-hover text-center">
-            <thead>
-                <tr>
-                    <th>Bus Name</th>
-                    <th>Departure City</th>
-                    <th>Arrival City</th>
-                    <th>Travel Date</th>
-                    <th>Departure Time</th>
-                    <th>Arrival Time</th>
-                    <th>Price</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($row['bus_name']); ?></td>
-                        <td><?php echo htmlspecialchars($row['departure_city']); ?></td>
-                        <td><?php echo htmlspecialchars($row['arrival_city']); ?></td>
-                        <td><?php echo htmlspecialchars($row['travel_date']); ?></td>
-                        <td><?php echo htmlspecialchars($row['departure_time']); ?></td>
-                        <td><?php echo htmlspecialchars($row['arrival_time']); ?></td>
-                        <td>₹<?php echo htmlspecialchars($row['price']); ?></td>
-                        <td><a href="book.php?bus_id=<?php echo $row['id']; ?>" class="btn btn-success">Book Now</a></td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+        <div class="row">
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <div class="col-md-4 bus-card-container">
+                    <div class="bus-card">
+                        <img src="<?php echo $row['bus_image']; ?>" alt="Bus Image" class="img-fluid">
+                        <div class="bus-details">
+                            <h4><?php echo htmlspecialchars($row['bus_name']); ?></h4>
+                            <p><i class="fas fa-clock"></i> Departure: <?php echo htmlspecialchars($row['departure_time']); ?></p>
+                            <p><i class="fas fa-clock"></i> Arrival: <?php echo htmlspecialchars($row['arrival_time']); ?></p>
+                            <p><i class="fas fa-map-marker-alt"></i> From: <?php echo htmlspecialchars($row['departure_city']); ?></p>
+                            <p><i class="fas fa-map-marker-alt"></i> To: <?php echo htmlspecialchars($row['arrival_city']); ?></p>
+                            <p><i class="fas fa-calendar-alt"></i> Date: <?php echo htmlspecialchars($row['travel_date']); ?></p>
+                            <p><i class="fas fa-money-bill-wave"></i> Price: ₹<?php echo htmlspecialchars($row['price']); ?></p>
+                            <a href="seat_selection.php?bus_id=<?php echo $row['id']; ?>&date=<?php echo $date; ?>" class="btn btn-success mt-auto"><i class="fas fa-check"></i> Select Seats</a>
+
+
+                        </div>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        </div>
     <?php else: ?>
         <div class="no-results">
             <p>No buses found for your search criteria.</p>
